@@ -1,0 +1,34 @@
+{
+    "name": "matheus/api",
+    "description": "Api para desafio da GESUAS",
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "Matheus Souza Jose",
+            "email": "matheus.jose@aluno.faculdadeimpacta.com.br",
+            "role": "Developer"
+        }
+    ],
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "autoload": {
+        "psr-4": {
+            "Source\\": "source/"
+        },
+        "files": [
+            "source/Boot/Helpers.php",
+            "source/Boot/Config.php"
+        ]
+    },
+    "require": {
+        "pecee/simple-router": "5.0.0.3",
+        "php-di/php-di": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "scripts": {
+        "test-php": "vendor/bin/phpunit tests/"
+    }
+}

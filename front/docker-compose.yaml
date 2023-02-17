@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  front:
+    container_name: gesuas-front
+    build: .
+    entrypoint: ./.docker/entrypoint.sh
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/home/node/app

@@ -1,0 +1,110 @@
+version: "3.7"
+
+networks:
+  gesuas:
+    driver: bridge
+
+volumes:
+  mysqldbvolumegesuas:
+    driver: local
+
+services:
+  nginx:
+    build:
+      context: ./.docker
+      dockerfile: nginx.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USER=${USER:-laravel}
+    restart: unless-stopped
+    container_name: nginx-gesuas
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/var/www/html
+      - .env:/var/www/html/.env
+    depends_on:
+      - php
+      - mysql
+      - phpmyadmin
+    networks:
+      - gesuas
+
+  php:
+    build:
+      context: ./.docker
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USER=${USER:-laravel}
+    container_name: php-gesuas
+    env_file:
+      - .env
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./:/var/www/html
+      - .env:/var/www/html/.env
+    networks:
+      - gesuas
+
+  mysql:
+    image: mysql:5.7
+    build:
+      context: .docker
+      dockerfile: mysql.dockerfile
+    container_name: mysql-gesuas
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - mysqldbvolumegesuas:/var/lib/mysql
+      - ./.docker/mysql/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d:rw
+    networks:
+      - gesuas
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.0
+    container_name: phpmyadmin-gesuas
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: ${DB_HOST}
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+      PMA_PORT: ${DB_PORT}
+    depends_on:
+      - mysql
+    ports:
+      - "8888:80"
+    networks:
+      - gesuas
+
+  composer:
+    build:
+      context: ./.docker
+      dockerfile: composer.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+        - USER=${USER:-laravel}
+    container_name: composer-gesuas
+    volumes:
+      - ./:/var/www/html
+      - .env:/var/www/html/.env
+    working_dir: /var/www/html
+    depends_on:
+      - php
+    user: ${USER:-laravel} #system user
+    #    profiles: [ "composer" ]
+    entrypoint: [ 'composer', '--ignore-platform-reqs' ]
+    networks:
+      - gesuas
