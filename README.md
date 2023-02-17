@@ -69,7 +69,7 @@ Subir a aplicação com docker
 docker-compose up -d --build nginx
 ```
 
-Aplicação do frontend estará disponível na url: [Link da aplicação](https://localhost:8080)
+Aplicação do frontend estará disponível na url: [Link da aplicação](http://localhost:8080)
 
 ### Enpoints:
 - [POST] - http://localhost:8000/api/v1/accounts
