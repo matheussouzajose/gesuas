@@ -1,13 +1,13 @@
 # DESAFIO GESUAS
 - Aplicação para gerar o número NIS.
 
-##### Frontend:
+### Frontend:
 - Tecnologias:
   - Docker
   - Vue.JS
   - Tailwind CSS.
 
-##### Api:
+### Api:
 - Tecnologias:
   - Docker
   - Nginx
